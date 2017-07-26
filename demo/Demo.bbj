@@ -1,0 +1,42 @@
+? 'HIDE'
+use ::sample-plugin/BBjPaginationWidget.bbj::BBjPaginationWidget
+
+wnd! = BBjAPI().openSysGui("X0").addWindow(10,10,800,700,"TEST")
+wnd!.setCallback(wnd!.ON_CLOSE,"byebye")
+
+minval=20
+maxval=201
+initval=25
+pgsize=10
+
+declare auto BBjSlider slider!
+slider! = wnd!.addHorizontalSlider(101, 10,50, 740, 25)
+slider!.setMinimum(minval)
+slider!.setMaximum(maxval)
+slider!.setCallback(BBjAPI.ON_CONTROL_SCROLL,"slider_scrolled")
+slider!.setValue(initval)
+
+declare BBjPaginationWidget paginator!
+paginator! = new BBjPaginationWidget(wnd!,100,10,150,300,25)
+paginator!.setCallback(BBjAPI.ON_CONTROL_SCROLL,"paging_selected")
+paginator!.setMinimum(minval)
+paginator!.setMaximum(maxval)
+paginator!.setPageSize(pgsize)
+paginator!.setValue(initval)
+
+val! =wnd!.addStaticText(102,10,77,200,25,"") 
+
+process_events
+byebye:bye
+
+slider_scrolled:
+    v=slider!.getValue()
+    paginator!.setValue(v)
+    val!.setText(str(v)+"/"+str(maxval))
+return
+
+paging_selected:
+    v=paginator!.getValue()
+    val!.setText(str(v)+"/"+str(maxval))
+    slider!.setValue(v)
+return

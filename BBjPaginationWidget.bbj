@@ -1,0 +1,176 @@
+use ::sample-plugin/BBjWidget.bbj::BBjWidget
+REM TODO: BBjWidget.bbj should be shipped with the BBj install and placed in a fixed path! 
+
+class public BBjPaginationWidget extends BBjWidget
+
+    field private int Min! =-1
+    field private int Max! =-1
+    field private int Pagesize! =-1
+    field private int Value! = -1
+    field private BBjVector PageButtons!
+
+    method private BBjPaginationWidget()
+    methodend
+
+    method public BBjPaginationWidget(BBjWindow wnd!, BBjNumber id, BBjNumber x, BBjNumber y, BBjNumber w, BBjNumber h)
+        #super!.create(wnd!,id,x,y,w,h)
+    methodend
+
+    method public void setMinimum(int min!)
+        #Min! = min!
+        #redraw()
+    methodend
+    
+    method public void setMaximum(int max!)
+        #Max! = max!
+        #redraw()
+    methodend
+
+    method public void setPageSize(int pagesize!)
+        #Pagesize! = pagesize!
+        #redraw()
+    methodend     
+    
+    method public void setValue(int value!)
+        if (#Value! <> value!) then
+            #Value! = value!
+            #redrawLabels()
+        fi
+    methodend
+
+    method public int getValue()
+        methodret #Value!
+    methodend
+
+    method public void setSize(BBjNumber p_width!, BBjNumber p_height!)
+        #super!.setSize(p_width!,p_height!)
+        #redraw()
+    methodend
+
+    method public void redraw()
+        if #Min!=-1 or #Max!=-1 OR #Pagesize!=-1 then   
+            methodret
+        fi
+        
+        dimension = min(#getH(),30)
+        
+        if #PageButtons! = null() then
+            rem control renders for the first time
+            tb_left!  = #getCanvas().addToolButton(10,0,0,dimension,dimension,"<")
+            tb_right! = #getCanvas().addToolButton(11,#getW()-dimension,0,dimension,dimension,">")
+            tb_left!.setCallback(BBjAPI.ON_TOOL_BUTTON_PUSH,#this!,"onTbLeft")
+            tb_right!.setCallback(BBjAPI.ON_TOOL_BUTTON_PUSH,#this!,"onTbRight")
+            
+            #PageButtons! = new BBjVector()
+        else
+            tb_left!  = #getCanvas().getControl(10)
+            tb_left!.setSize(dimension,dimension)
+            tb_right!  = #getCanvas().getControl(11)
+            tb_right!.setSize(dimension,dimension)
+            tb_right!.setLocation(#getW()-dimension,0)
+            
+            it! = #PageButtons!.iterator()
+            while it!.hasNext()
+                it!.next().destroy()
+            wend
+        fi
+        
+        
+        if (mod((#Max!-#Min!),#Pagesize!)=0) then 
+            b_count = int((#getW()-(2*dimension) ) / dimension)
+            b_count=min(b_count , int((#Max!-#Min!) / #Pagesize!)+1)
+        else
+            b_count = int((#getW()-(2*dimension) ) / dimension)
+            b_count=min(b_count , int((#Max!-#Min!) / #Pagesize!)+1)
+        fi
+        
+        offset = int((#getW()-(2*dimension) - b_count*dimension)/2)
+        
+        if (b_count>0) then
+            for i=1 to b_count
+                tb! =  #getCanvas().addToolButton(100+i,offset+(dimension*i),0,dimension,dimension,"")
+                tb!.setText(str(i))
+                #PageButtons!.addItem(tb!)
+                tb!.setCallback(BBjAPI.ON_TOOL_BUTTON_PUSH,#this!,"onTbPage")
+            next
+        fi
+        #redrawLabels()
+        
+    methodend
+    
+    method private void redrawLabels()
+        
+        declare auto BBjToolButton tb!
+        
+        if #PageButtons! = null() then
+            methodret
+        fi
+        
+        currpage = int((#Value!-#Min!) / #Pagesize!)+1
+        first = max(1,currpage - int(#PageButtons!.size()/2))
+
+        if ((first+#PageButtons!.size())*#Pagesize!)>#Max! then
+            if (mod(#Max!-#Min!,#Pagesize!)>0)
+                first = max(1,int(#Max!/#Pagesize!)-#PageButtons!.size())
+            else
+                first = max(1,int(#Max!/#Pagesize!)-#PageButtons!.size())
+            fi
+        fi
+        
+        it! = #PageButtons!.iterator()
+        curr=first
+        while it!.hasNext()
+            tb! = it!.next()
+            tb!.setText(str(curr))
+            tb!.setToolTipText(str((curr-1)*#Pagesize!+#Min!)+"-"+str(min(#Max!,(curr)*#Pagesize!+#Min!-1)))
+            tb!.setAttribute("item",str((curr-1)*#Pagesize!+#Min!))
+            if curr = currpage then
+                tb!.setSelected(1)
+            else
+                tb!.setSelected(0)
+                
+            fi
+            curr=curr+1
+        wend
+        
+    methodend
+
+
+    method public void onTbPage(BBjToolButtonPushEvent ev!)
+        v=num(ev!.getControl().getAttribute("item"))
+        #setValue(v)
+        #fireEvent()
+    methodend
+
+
+    method public void onTbLeft(BBjToolButtonPushEvent ev!)
+        #setValue(max(#Min!,#getValue()-#Pagesize!))
+        #fireEvent()
+    methodend
+
+    method public void onTbRight(BBjToolButtonPushEvent ev!)
+        #setValue(min(#Max!,#getValue()+#Pagesize!))
+        #fireEvent()
+    methodend
+    
+    method private void fireEvent()
+        rem we're posting BBj Standard Events wherever possible. Is this a good idea?
+        BBjAPI().postPriorityCustomEvent(str(#this!)+str(BBjAPI.ON_CONTROL_SCROLL),#getValue())
+    methodend
+
+classend
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

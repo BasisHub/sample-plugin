@@ -1,0 +1,328 @@
+rem /**
+rem  * Standard Implementation of a BBjWidget
+rem  * Tries to implement all necessary methods of the BBj Interface BBjControl with
+rem  * useful functionality
+rem  * so that only methods that need to work different in a given control have to be
+rem  * implemented in the actual widget
+rem  */
+class public BBjWidget implements BBjControl  
+
+    field protected BBjChildWindow Canvas!
+    field protected BBjNumber X
+    field protected BBjNumber Y
+    field protected BBjNumber W
+    field protected BBjNumber H
+    field protected String Text!
+
+    method public BBjWidget()
+    methodend
+
+    method protected void create(BBjWindow wnd!, BBjNumber id, BBjNumber x, BBjNumber y, BBjNumber w, BBjNumber h)
+        #Canvas! = wnd!.addChildWindow(id,x,y,w,h,"",$00000800$,BBjAPI().getSysGui().getAvailableContext())
+        #X=x
+        #Y=y
+        #W=w
+        #H=h
+    methodend
+
+
+    method public void setCallback(int p_eventType!, String p_callback!)
+        BBjAPI().setCustomEventCallback(str(#this!)+str(p_eventType!),p_callback!)
+    methodend
+    
+    method public void setCallback(int p_eventType!, Object p_snippetSetInstance!, String p_method!) 
+        BBjAPI().setCustomEventCallback(str(#this!)+str(p_eventType!),p_snippetSetInstance!,p_method!)
+    methodend                 
+                     
+    method public void clearCallback(int p_eventType!) 
+    methodend
+    
+    method public int getContextID()
+        methodret #Canvas!.getContextID()
+    methodend
+
+    method public BBjPopupMenu addPopupMenu() 
+        methodret #Canvas!.addPopupMenu()
+    methodend
+    
+    method public void setPopupMenu(BBjPopupMenu p_popupMenu!)
+        #Canvas!.setPopupMenu(p_popupMenu!)
+    methodend
+    
+    method public BBjPopupMenu getPopupMenu()
+        methodret #Canvas!.getPopupMenu()
+    methodend
+    
+    method public void removePopupMenu()
+        #Canvas!.removePopupMenu()
+    methodend
+
+    rem /**PROPERTIES **/
+    
+    method public void setText(String text!)
+        #Text$ = text!
+    methodend
+    
+    method public String getText() 
+        methodret Text!
+    methodend
+
+    method public BBjColor getBackColor()
+        methodret #Canvas!.getBackColor()
+    methodend
+     
+    method public void setBackColor(BBjColor p_color!)
+        #Canvas!.setBackColor(p_color!)
+    methodend
+     
+
+    method public void setForeColor(BBjColor p_color!)
+        #Canvas!.setForeColor(p_color!)
+    methodend
+     
+    method public BBjColor getForeColor()
+        methodret #Canvas!.getBackColor()
+    methodend
+     
+
+    method public void setFont(BBjFont p_font!)
+        #Canvas!.setFont(p_font!)
+    methodend
+     
+    method public BBjFont getFont()
+        methodret #Canvas!.getFont()
+    methodend
+     
+
+    method public boolean isEnabled() 
+        methodret #Canvas!.isEnabled()
+    methodend
+    
+    method public void setEnabled(boolean p_param0!)
+        #Canvas!.setEnabled(p_param0!)
+    methodend
+
+    method public void setVisible(boolean p_param0!)
+        #Canvas!.setVisible(p_param0!)
+    methodend
+     
+    method public boolean isVisible()
+        methodret #Canvas!.isVisible()
+    methodend
+     
+
+    method public void setToolTipText(String p_param0!)
+        #Canvas!.setToolTipText(p_param0!)
+    methodend
+    
+    method public String getToolTipText()
+        methodret #Canvas!.getToolTipText()
+    methodend
+     
+    method public void showToolTipText()
+        #Canvas!.showToolTipText()
+    methodend
+     
+    method public void showToolTipText(BBjNumber p_x!, BBjNumber p_y!)
+        #Canvas!.showToolTipText(p_x!,p_y!)
+    methodend
+
+    method public void setShortCue(String p_param!)
+        #Canvas!.setShortCue(p_param!)
+    methodend
+     
+    method public String getShortCue()
+        methodret #Canvas!.getShortCue()
+    methodend
+     
+
+    method public void setLongCue(String p_param!)
+        #Canvas!.setLongCue(p_param!)
+    methodend
+     
+    method public String getLongCue()
+        methodret #Canvas!.getLongCue()
+    methodend
+     
+
+    rem // DRAG/DROP PROPERTIES
+    rem //moved into their own interfaces.
+
+    method public void setCausesControlValidation(boolean p_causeValidation!)
+        throw "Widgets can't cause control validation",252
+    methodend
+    
+    method public boolean getCausesControlValidation()
+        return 0
+    methodend
+     
+
+    REM //END PROPERTIES
+
+    method public void setSize(BBjNumber p_width!, BBjNumber p_height!)
+        #W = p_width!
+        #H = p_height!
+        #Canvas!.setSize(p_width!,p_height!)
+    methodend
+    
+        
+    method public BBjNumber getWidth()
+        methodret #W
+    methodend
+     
+    method public BBjNumber getHeight()
+        methodret #H
+    methodend
+     
+    method public void setLocation(BBjNumber p_xPosition!, BBjNumber p_yPosition!)
+        #X = p_xPosition!
+        #Y = p_yPosition!
+        #Canvas!.setLocation(p_xPosition!,p_yPosition!) 
+    methodend
+    
+        
+    method public BBjNumber getX()
+        methodret #X
+    methodend
+     
+    method public BBjNumber getY()
+        methodret #Y
+    methodend
+     
+
+    method public int getScreenX()
+        methodret #Canvas!.getScreenX()
+    methodend
+     
+    method public int getScreenY()
+        methodret #Canvas!.getScreenY()
+    methodend
+     
+
+    method public void setClientEdge(boolean p_setClientEdge!)
+        #Canvas!.setClientEdge(p_setClientEdge!)
+    methodend
+     
+    method public boolean getClientEdge()
+        methodret #Canvas!.getClientEdge() 
+    methodend
+     
+    method public void setRaisedEdge(boolean p_setRaisedEdge!)
+        #Canvas!.setRaisedEdge(p_setRaisedEdge!)
+    methodend
+     
+    method public boolean getRaisedEdge()
+        methodret #Canvas!.getRaisedEdge()
+    methodend
+     
+    method public void setNoEdge(boolean p_setNoEdge!)
+        #Canvas!.setNoEdge(p_setNoEdge!)
+    methodend
+     
+    method public boolean getNoEdge()
+        methodret #Canvas!.getNoEdge()
+    methodend
+     
+    method public void setOpaque(boolean p_setOpaque!)
+        #Canvas!.setOpaque(p_setOpaque!)
+    methodend
+     
+    method public boolean isOpaque()
+        methodret #Canvas!.isOpaque()
+    methodend
+     
+    method public void focus()
+        #Canvas!.focus()
+    methodend
+     
+    method public int getID()
+        methodret #Canvas!.getID()
+    methodend
+     
+    method public int getControlType()
+        REM TODO - WHAT CONTROL TYPE TO RETURN FOR A WIDGET 
+        methodret 999
+    methodend
+     
+    method public void destroy()
+        #Canvas!.destroy()
+    methodend
+     
+    method public boolean isDestroyed()
+        methodret #Canvas!.isDestroyed()
+    methodend
+     
+    method public void setUserData(Object p_userData!)
+        #Canvas!.setUserData(p_userData!)
+    methodend
+     
+    method public Object getUserData()
+        methodret #Canvas!.getUserData()
+    methodend
+     
+    method public void setCursor(int p_cursor!)
+        #Canvas!.setCursor(p_cursor!)
+    methodend     
+    
+    method public String getName()
+        methodret #Canvas!.getName()
+    methodend     
+ 
+    method public void setName(String p_name!)
+        #Canvas!.setName(p_name!)
+    methodend     
+  
+    method public boolean addStyle(String p_styleName!)
+        methodret #Canvas!.addStyle(p_styleName!)
+    methodend     
+  
+    method public boolean removeStyle(String p_styleName!)
+        methodret #Canvas!.removeStyle(p_styleName!)
+    methodend     
+  
+    method public void clearStyles()
+        #Canvas!.clearStyles()
+    methodend     
+  
+    method public BBjVector getStyles()
+        methodret #Canvas!.getStyles()
+    methodend     
+  
+    method public void setAttribute(String p_attribute!, String p_value!)
+        #Canvas!.setAttribute(p_attribute!,p_value!)
+    methodend     
+  
+    method public String getAttribute(String p_attribute!)
+        methodret #Canvas!.getAttribute(p_attribute!)
+    methodend     
+  
+
+    method public void putClientProperty(Object p_key!, Object p_value!)
+        #Canvas!.putClientProperty(p_key!,p_value!)
+    methodend     
+  
+    method public Object getClientProperty(Object p_key!)
+        methodret #Canvas!.getClientProperty(p_key!)
+    methodend     
+  
+
+    method public BBjWindow getParentWindow()
+        methodret #Canvas!.getParentWindow()
+    methodend     
+ 
+classend
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

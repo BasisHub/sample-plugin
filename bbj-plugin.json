@@ -1,0 +1,9 @@
+{
+"name":"BBjPaginationWidget",
+"description":"A pagination widget to be used instead of a slider",
+"version":"0.99",
+"author":"Stephan Wald",
+"dependencies":[
+{"BBj":"16.11"}
+]
+}
